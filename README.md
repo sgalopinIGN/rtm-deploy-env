@@ -1,2 +1,2 @@
 # ogam-deploy-env
-Environnement de déploiement de l'application OGAM.
+Machine virtuelle configurée pour le **développement** d'OGAM avec Puppet open source en acrchitecture standalone.
