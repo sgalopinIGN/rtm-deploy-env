@@ -118,7 +118,7 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Provisions for the "ogam.prod.net.pp" file
-  config.vm.provision "file", source: "./ogam.prod.net.pp", destination: "/var/tmp/ogam.prod.net.pp"
+  config.vm.provision "file", source: "./puppet/ogam.prod.net.pp", destination: "/var/tmp/ogam.prod.net.pp"
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
     sudo mv /var/tmp/ogam.prod.net.pp /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
   SHELL
