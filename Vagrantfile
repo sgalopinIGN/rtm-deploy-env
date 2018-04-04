@@ -114,7 +114,7 @@ Vagrant.configure("2") do |config|
   # Provision "update-module"
   config.vm.provision "update-module", type: "shell", privileged: false, inline: <<-SHELL
     rm -rdf /var/tmp/puppet-ogam
-    git clone https://github.com/IGNF/puppet-ogam /var/tmp/puppet-ogam
+    git clone https://github.com/sgalopinIGN/puppet-ogam.git /var/tmp/puppet-ogam
     puppet module build /var/tmp/puppet-ogam 
     sudo -i puppet module list | grep ogam
     if [ $? = 0 ]; then
