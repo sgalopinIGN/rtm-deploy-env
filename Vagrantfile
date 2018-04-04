@@ -25,9 +25,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
-  #config.vm.box = "bento/ubuntu-16.04"
-  #config.vm.box = "debian/contrib-stretch64" # Box with Virtualbox Guest Additions
-  config.vm.box = "debian/stretch64"
+  config.vm.box = "debian/stretch64" # No need of Virtualbox Guest Additions
   
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -94,63 +92,47 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
   config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    # Puppet package
+    # https://puppet.com/docs/puppet/5.3/puppet_platform.html
+    wget -r -O /var/tmp/puppet.deb https://apt.puppetlabs.com/puppet5-release-stretch.deb
+    sudo dpkg -i /var/tmp/puppet.deb
 
-  	########################
-    # Packages and Sources #
-    ########################
-	
-	# Puppet package
-	# https://puppet.com/docs/puppet/5.3/puppet_platform.html
-	# Debian 9 Stretch
-	wget -r -O /var/tmp/puppet.deb https://apt.puppetlabs.com/puppet5-release-stretch.deb
-	# Ubuntu 16.04 Xenial Xerus
-	# wget -r -O /var/tmp/puppet.deb https://apt.puppetlabs.com/puppet5-release-xenial.deb
-	sudo dpkg -i /var/tmp/puppet.deb
-	
     # Apt update and upgrade
     sudo apt-get update
     sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 
     # Puppet and git install
-	sudo apt-get install -y puppet-agent git-core
-	# export PATH=/opt/puppetlabs/bin:$PATH
-	
+    sudo apt-get install -y puppet-agent git-core
   SHELL
 
   # Provisions for the "ogam.prod.net.pp" file
-  config.vm.provision "file", source: "./puppet/ogam.prod.net.pp", destination: "/var/tmp/ogam.prod.net.pp"
-  config.vm.provision "shell", privileged: false, inline: <<-SHELL
+    config.vm.provision "file", source: "./puppet/ogam.prod.net.pp", destination: "/var/tmp/ogam.prod.net.pp"
+    config.vm.provision "shell", privileged: false, inline: <<-SHELL
     sudo mv /var/tmp/ogam.prod.net.pp /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
   SHELL
   
   # Provision "update-module"
   config.vm.provision "update-module", type: "shell", privileged: false, inline: <<-SHELL
-
-	rm -rdf /var/tmp/puppet-ogam
-	git clone https://github.com/IGNF/puppet-ogam /var/tmp/puppet-ogam
-	puppet module build /var/tmp/puppet-ogam 
-	sudo -i puppet module list | grep ogam
-	if [ $? = 0 ]; then
-	  sudo -i puppet module uninstall --ignore-changes puppet-ogam;
-	  sudo -i puppet module install --ignore-dependencies /var/tmp/puppet-ogam/pkg/puppet-ogam-1.0.0.tar.gz
-	else
-	  sudo -i puppet module install /var/tmp/puppet-ogam/pkg/puppet-ogam-1.0.0.tar.gz
-	fi
-	
+    rm -rdf /var/tmp/puppet-ogam
+    git clone https://github.com/IGNF/puppet-ogam /var/tmp/puppet-ogam
+    puppet module build /var/tmp/puppet-ogam 
+    sudo -i puppet module list | grep ogam
+    if [ $? = 0 ]; then
+      sudo -i puppet module uninstall --ignore-changes puppet-ogam;
+      sudo -i puppet module install --ignore-dependencies /var/tmp/puppet-ogam/pkg/puppet-ogam-1.0.0.tar.gz
+    else
+      sudo -i puppet module install /var/tmp/puppet-ogam/pkg/puppet-ogam-1.0.0.tar.gz
+    fi
   SHELL
 
   # Provision "apply"
   config.vm.provision "apply", type: "shell", privileged: true, inline: <<-SHELL
-
-	puppet apply --environment production /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
-	
+    puppet apply --environment production /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
   SHELL
   
   # Provision "tasks"
   config.vm.provision "tasks", type: "shell", privileged: true, inline: <<-SHELL
-  
-	/bin/bash /root/tmp/ogam/scripts/tasks_plan.sh -e production
-	
+    /bin/bash /root/tmp/ogam/scripts/tasks_plan.sh -e production
   SHELL
 
 end
