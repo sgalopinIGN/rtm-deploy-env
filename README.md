@@ -21,7 +21,7 @@ Move to the directory where you installed the project:
 - Open a console ('right click' then 'Git Bash Here'),
 - Type the 'vagrant up' command.
 
-### Add Host Resolution Locally (Optional)
+### Add the host resolution locally (Optional)
 Into your host file (ex: "C:\Windows\System32\drivers\etc\hosts") add the following line:
 ```
 192.168.50.18 ogam.dev.net
