@@ -21,14 +21,20 @@ Move to the directory where you installed the project:
 - Open a console ('right click' then 'Git Bash Here'),
 - Type the 'vagrant up' command.
 
-### Access to the website
-Start your browser and enter the address: http://192.168.50.19/
-
-### Add Host Resolution Locally (Optional)
+### Add the host resolution locally (Optional)
 Into your host file (ex: "C:\Windows\System32\drivers\etc\hosts") add the following line:
 ```
 192.168.50.19 ogam.prod.net
 ```
+
+### Access to the VM
+- [Website](http://192.168.50.19):
+  - Use your navigator (Host: 192.168.50.19, Port: 80, Login: admin, Password: admin)
+- SSH:
+  - Solution 1: Use the command **$ vagrant ssh**,
+  - Solution 2: Use a SSH client ( Host: 192.168.50.19, Port: 22, Login: vagrant, Password: vagrant )
+- PostgreSQL:
+  - Use pgAdmin ( Host: 192.168.50.19, Port: 5432, Base: ogam, Login: ogam, Password: ogam)
 
 ## Uninstall
 
