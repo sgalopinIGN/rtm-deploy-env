@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "debian/stretch64" # No need of Virtualbox Guest Additions
-  
+
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
@@ -110,12 +110,12 @@ Vagrant.configure("2") do |config|
     config.vm.provision "shell", privileged: false, inline: <<-SHELL
     sudo mv /var/tmp/ogam.prod.net.pp /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
   SHELL
-  
-  # Provision "update-module"
-  config.vm.provision "update-module", type: "shell", privileged: false, inline: <<-SHELL
+
+  # Provision "deploy"
+  config.vm.provision "deploy", type: "shell", privileged: false, inline: <<-SHELL
     rm -rdf /var/tmp/puppet-ogam
     git clone https://github.com/sgalopinIGN/puppet-ogam.git /var/tmp/puppet-ogam
-    puppet module build /var/tmp/puppet-ogam 
+    puppet module build /var/tmp/puppet-ogam
     sudo -i puppet module list | grep ogam
     if [ $? = 0 ]; then
       sudo -i puppet module uninstall --ignore-changes puppet-ogam;
@@ -129,7 +129,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "apply", type: "shell", privileged: true, inline: <<-SHELL
     puppet apply --environment production /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
   SHELL
-  
+
   # Provision "tasks"
   config.vm.provision "tasks", type: "shell", privileged: true, inline: <<-SHELL
     /bin/bash /root/tmp/ogam/scripts/tasks_plan.sh -e production
