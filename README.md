@@ -12,7 +12,7 @@ Vagrant is used to instantiate the virtual machine.
 - Clone the repository:
     - Move to the directory where you want to install the project,
     - Open a 'Git Bash' (ex: Right click and 'Git Bash'),
-    - Type the following command line: 'git clone https://github.com/sgalopinIGN/ogam-deploy-env.git --single-branch --branch development'.
+    - Type the following command line: 'git clone https://github.com/sgalopinIGN/ogam-deploy-env.git --single-branch --branch production'.
 
 ### Launch the VM
 
