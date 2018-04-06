@@ -8,6 +8,7 @@
 Vagrant is used to instantiate the virtual machine.
 - Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads),
 - Install [Vagrant](https://www.vagrantup.com/downloads.html),
+- [Configure Vagrant to use a proxy](https://github.com/sgalopinIGN/ogam-deploy-env/tree/production#vagrant-proxy-configuration) (Optional),
 - Install [Git](https://git-scm.com/downloads),
 - Clone the repository:
     - Move to the directory where you want to install the project,
@@ -37,7 +38,7 @@ Into your host file (ex: "C:\Windows\System32\drivers\etc\hosts") add the follow
 - Delete the sources,
 - Remove VirtualBox, Vagrant, Git.
 
-## Development
+## Vagrant
 
 ### Vagrant commands
 - **$ vagrant ssh**: Opens an ssh console to the server.
@@ -47,4 +48,37 @@ Into your host file (ex: "C:\Windows\System32\drivers\etc\hosts") add the follow
 - **$ vagrant provision --provision-with apply**: Launch a puppet apply.
 - **$ vagrant provision --provision-with tasks**: Launch the predefined tasks.
 
+### Vagrant proxy configuration
+
+If your are into an enterprise network, you may need to configure Vagrant to use your local proxy :
+  - Open a 'Git Bash' (ex: Right click and 'Git Bash').
+  - Add the following environment variables:
+  ```shell
+  $ http_proxy = http://proxy.ign.fr:3128/
+  $ https_proxy = http://proxy.ign.fr:3128/
+  ```
+  - Install the vagrant-proxyconf plugin:
+  ```shell
+  $ vagrant plugin install vagrant-proxyconf
+  ```
+  - Open your profile's Vagrantfile:
+  ```shell
+  $ nano  ~/.vagrant.d/Vagrantfile
+  ```
+  - Add the following code:
+  ```shell
+  Vagrant.configure("2") do |config|
+    puts "Setting of the IGN proxy configuration."
+    if Vagrant.has_plugin?("vagrant-proxyconf")
+      config.proxy.http     = "http://proxy.ign.fr:3128/"
+      config.proxy.https    = "http://proxy.ign.fr:3128/"
+      config.proxy.no_proxy = "localhost,127.0.0.1,.example.com"
+    end
+  end
+  ```
+  * Check the configuration:
+  ```shell
+  $ vagrant up
+  ```
+  Check that the « Setting of the IGN proxy configuration. » message is present.
 
