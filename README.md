@@ -1,5 +1,5 @@
-# ogam-deploy-env
- Virtual machine configured to test OGAM in a **production** like mode with open source Puppet in standalone architecture.
+# rtm-deploy-env
+ Virtual machine configured to test RTM in a **production** like mode with open source Puppet in standalone architecture.
 
 ## Installation
 
@@ -8,12 +8,12 @@
 Vagrant is used to instantiate the virtual machine.
 - Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads),
 - Install [Vagrant](https://www.vagrantup.com/downloads.html),
-- [Configure Vagrant to use a proxy](https://github.com/sgalopinIGN/ogam-deploy-env/tree/production#vagrant-proxy-configuration) (Optional),
+- [Configure Vagrant to use a proxy](https://github.com/sgalopinIGN/rtm-deploy-env/tree/production#vagrant-proxy-configuration) (Optional),
 - Install [Git](https://git-scm.com/downloads),
 - Clone the repository:
     - Move to the directory where you want to install the project,
     - Open a 'Git Bash' (ex: Right click and 'Git Bash'),
-    - Type the following command line: 'git clone https://github.com/sgalopinIGN/ogam-deploy-env.git --single-branch --branch production'.
+    - Type the following command line: 'git clone https://github.com/sgalopinIGN/rtm-deploy-env.git --single-branch --branch production'.
 
 ### Launch the VM
 
@@ -24,17 +24,17 @@ Move to the directory where you installed the project:
 ### Add the host resolution locally (Optional)
 Into your host file (ex: "C:\Windows\System32\drivers\etc\hosts") add the following line:
 ```
-192.168.50.19 ogam.prod.net
+192.168.50.22 rtm.prod.net
 ```
 
 ### Access to the VM
-- [Website](http://192.168.50.19):
-  - Use your navigator (Host: 192.168.50.19, Port: 80, Login: admin, Password: admin)
+- [Website](http://192.168.50.22):
+  - Use your navigator (Host: 192.168.50.22, Port: 80, Login: admin, Password: admin)
 - SSH:
   - Solution 1: Use the command **$ vagrant ssh**,
-  - Solution 2: Use a SSH client ( Host: 192.168.50.19, Port: 22, Login: vagrant, Password: vagrant )
+  - Solution 2: Use a SSH client ( Host: 192.168.50.22, Port: 22, Login: vagrant, Password: vagrant )
 - PostgreSQL:
-  - Use pgAdmin ( Host: 192.168.50.19, Port: 5432, Base: ogam, Login: ogam, Password: ogam)
+  - Use pgAdmin ( Host: 192.168.50.22, Port: 5432, Base: bdrtm, Login: rtm, Password: rtm)
 
 ## Uninstall
 

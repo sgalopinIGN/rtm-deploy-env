@@ -7,10 +7,10 @@
 
 # agent_ip:
 #  - IP of the agent virtual machine hosting the application (This VM)
-agent_ip = "192.168.50.19"
+agent_ip = "192.168.50.22"
 # agent_hostname:
 #  - Hostname of the agent virtual machine hosting the application (This VM)
-agent_hostname = "ogam.prod.net"
+agent_hostname = "rtm.prod.net"
 
 # !!!!!!!!!!!!!!!!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -105,34 +105,36 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y puppet-agent git-core
   SHELL
 
-  # Provisions for the "ogam.prod.net.pp" file
-    config.vm.provision "file", source: "./puppet/ogam.prod.net.pp", destination: "/var/tmp/ogam.prod.net.pp"
+  # Provisions for the "rtm.prod.net.pp" file
+    config.vm.provision "file", source: "./puppet/rtm.prod.net.pp", destination: "/var/tmp/rtm.prod.net.pp"
     config.vm.provision "shell", privileged: false, inline: <<-SHELL
-    sudo mv /var/tmp/ogam.prod.net.pp /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
+    sudo mv /var/tmp/rtm.prod.net.pp /etc/puppetlabs/code/environments/production/manifests/rtm.prod.net.pp
   SHELL
 
   # Provision "deploy"
   config.vm.provision "deploy", type: "shell", privileged: false, inline: <<-SHELL
-    rm -rdf /var/tmp/puppet-ogam
-    git clone https://github.com/sgalopinIGN/puppet-ogam.git /var/tmp/puppet-ogam
-    puppet module build /var/tmp/puppet-ogam
-    sudo -i puppet module list | grep ogam
+    rm -rdf /var/tmp/puppet-rtm
+    git clone https://github.com/sgalopinIGN/puppet-rtm.git /var/tmp/puppet-rtm
+    puppet module build /var/tmp/puppet-rtm
+    sudo -i puppet module list | grep rtm
     if [ $? = 0 ]; then
-      sudo -i puppet module uninstall --ignore-changes puppet-ogam;
-      sudo -i puppet module install --ignore-dependencies /var/tmp/puppet-ogam/pkg/puppet-ogam-1.0.0.tar.gz
+      sudo -i puppet module uninstall --ignore-changes puppet-rtm;
+      sudo -i puppet module install --ignore-dependencies /var/tmp/puppet-rtm/pkg/puppet-rtm-1.0.0.tar.gz
     else
-      sudo -i puppet module install /var/tmp/puppet-ogam/pkg/puppet-ogam-1.0.0.tar.gz
+      sudo -i puppet module install /var/tmp/puppet-rtm/pkg/puppet-rtm-1.0.0.tar.gz
     fi
   SHELL
 
   # Provision "apply"
   config.vm.provision "apply", type: "shell", privileged: true, inline: <<-SHELL
-    puppet apply --environment production /etc/puppetlabs/code/environments/production/manifests/ogam.prod.net.pp
+    puppet apply --environment production /etc/puppetlabs/code/environments/production/manifests/rtm.prod.net.pp
   SHELL
 
   # Provision "tasks"
   config.vm.provision "tasks", type: "shell", privileged: true, inline: <<-SHELL
-    /bin/bash /root/tmp/ogam/scripts/tasks_plan.sh -e production
+    #/bin/bash /root/tmp/rtm/scripts/tasks_plan.sh -e production
+	/bin/bash /root/tmp/rtm/scripts/build_ogamserver.sh
+	/bin/bash /root/tmp/rtm/scripts/build_ogamservices.sh
   SHELL
 
 end
