@@ -8,14 +8,14 @@
 # app_sources_path_on_guest:
 #  - Path of the directory on the guest generated per the "git clone" command.
 #  - That path must contain the ".git" directory and your application sources used for the installation.
-app_sources_path_on_guest = "/var/www/ogam"
+app_sources_path_on_guest = "/var/www/rtm"
 # app_scripts_path_on_guest:
 #  - Path of the directory on the guest containing the tasks's scripts.
 #  - That scripts can be generated per puppet from templates.
-app_scripts_path_on_guest = "/root/tmp/ogam/scripts"
+app_scripts_path_on_guest = "/root/tmp/rtm/scripts"
 # app_module_short_name:
 #  - Set "mymodule" for a puppet module named "mypuppetuser_mymodule".
-app_module_short_name = "ogam"
+app_module_short_name = "rtm"
 # branch_name: ["production", "development", "feature_*", ...]
 #  - Before using it, you may have to create the corresponding branch into the control repositoy, the application module repository, the tasks...
 #  - If the branch is unknow the "production" branch will be used per default.
@@ -24,12 +24,12 @@ branch_name = "development"
 #  - "puppetfile" option:
 #    - Prefered option for development or for those who don't have access to a control repository.
 #    - Check that the "branch_name" variable and the ":branch" attribute of your application module are matching.
-#    - Check that "./puppet/ogam.dev.net.pp" file exist and is properly configured
+#    - Check that "./puppet/rtm.dev.net.pp" file exist and is properly configured
 #    - That option can be configured via the ./puppet/Puppetfile file.
 #  - "control_repository" option:
 #    - Prefered option for production or for those who have access to a control repository.
 #    - Check that the branch set per the "branch_name" variable exist into your control repository.
-#    - Check that "manifests/ogam.dev.net.pp" file exist and is properly configured into your control repository branch.
+#    - Check that "manifests/rtm.dev.net.pp" file exist and is properly configured into your control repository branch.
 #    - That option can be configured via the ./puppet/r10k.yaml file.
 deploy_type = "puppetfile"
 # task_runner: ["shell", "bolt"]
@@ -46,19 +46,19 @@ task_runner = "shell"
 #   - The first path is the local path (on the guest).
 #   - The second path is the shared path (on the guest).
 excluded_dirs = [[ # server vendor dir
-  '/home/vagrant/ogam/server/vendor',
+  '/home/vagrant/rtm/server/vendor',
   app_sources_path_on_guest + '/website/htdocs/server/ogamServer/vendor'
 ],[ # server cache dir
-  '/home/vagrant/ogam/server/app/cache',
+  '/home/vagrant/rtm/server/app/cache',
   app_sources_path_on_guest + '/website/htdocs/server/ogamServer/app/cache'
 ],[ # server logs dir
-  '/home/vagrant/ogam/server/app/logs',
+  '/home/vagrant/rtm/server/app/logs',
   app_sources_path_on_guest + '/website/htdocs/server/ogamServer/app/logs'
 ],[ # server sessions dir
-  '/home/vagrant/ogam/server/app/sessions',
+  '/home/vagrant/rtm/server/app/sessions',
   app_sources_path_on_guest + '/website/htdocs/server/ogamServer/app/sessions'
 ],[ # client build dir
-  '/home/vagrant/ogam/client/build',
+  '/home/vagrant/rtm/client/build',
   app_sources_path_on_guest + '/website/htdocs/client/build'
 ]]
 
@@ -91,7 +91,7 @@ Vagrant.configure("2") do |config|
   # using a specific IP.
   # config.vm.network "private_network", ip: "192.168.33.10"
   config.vm.network "private_network", ip: "192.168.50.18"
-  config.vm.hostname = "ogam.dev.net"
+  config.vm.hostname = "rtm.dev.net"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -126,7 +126,7 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |v|
     v.memory = 4096
     v.cpus = 2
-    v.name = "ogam.dev.net"
+    v.name = "rtm.dev.net"
   end
 
   # Define a Vagrant Push strategy for pushing to Atlas. Other push strategies
@@ -211,21 +211,21 @@ Vagrant.configure("2") do |config|
     fi
   SHELL
 
-  # Provisions for the "ogam.dev.net.pp" file
+  # Provisions for the "rtm.dev.net.pp" file
   if deploy_type == "puppetfile"
-    config.vm.provision "file", source: "./puppet/ogam.dev.net.pp", destination: "/var/tmp/ogam.dev.net.pp"
+    config.vm.provision "file", source: "./puppet/rtm.dev.net.pp", destination: "/var/tmp/rtm.dev.net.pp"
     config.vm.provision "shell", privileged: true, args: [branch_name], inline: <<-SHELL
-      # The "ogam.dev.net.pp" must be placed in the "/etc/puppetlabs/code/environments/$1/manifests" directory.
+      # The "rtm.dev.net.pp" must be placed in the "/etc/puppetlabs/code/environments/$1/manifests" directory.
       mkdir -p /etc/puppetlabs/code/environments/$1/manifests
-      mv /var/tmp/ogam.dev.net.pp /etc/puppetlabs/code/environments/$1/manifests/ogam.dev.net.pp
-      chown root:root /etc/puppetlabs/code/environments/$1/manifests/ogam.dev.net.pp
+      mv /var/tmp/rtm.dev.net.pp /etc/puppetlabs/code/environments/$1/manifests/rtm.dev.net.pp
+      chown root:root /etc/puppetlabs/code/environments/$1/manifests/rtm.dev.net.pp
     SHELL
   end
 
   # Provision "apply" to run a puppet apply
   config.vm.provision "apply", type: "shell", privileged: true, args: [branch_name], inline: <<-SHELL
   	# sudo -i puppet apply -e "class {'my_class': }"
-  	puppet apply --environment $1 /etc/puppetlabs/code/environments/$1/manifests/ogam.dev.net.pp
+  	puppet apply --environment $1 /etc/puppetlabs/code/environments/$1/manifests/rtm.dev.net.pp
   SHELL
 
   # Provisions for the excluded dirs
